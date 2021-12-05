@@ -41,7 +41,7 @@ fn compute_position_product_from_input(input: String) -> i32
 
 fn compute_position_product_from_input_2(input: String) -> i32
 {
-    let lines = input.split("\n");
+    let lines = input.lines();
 
     let mut aim      = 0;
     let mut position = Coordinate{y:0, z:0};
