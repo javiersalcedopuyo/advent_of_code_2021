@@ -1,7 +1,8 @@
 #[derive(Default)]
 pub struct BingoBoard
 {
-    cells: [BingoCell; 25]
+    cells: [BingoCell; 25],
+    bingo: bool
 }
 
 #[derive(Default, Clone, Copy)]
@@ -13,6 +14,8 @@ struct BingoCell
 
 impl BingoBoard
 {
+    pub fn get_bingo_state(&self) -> bool { return self.bingo }
+
     pub fn set_cell_at(&mut self, x: usize, y: usize, val: i32)
     {
         self.cells[x * 5 + y] = BingoCell{value: val, is_marked: false};
@@ -47,13 +50,14 @@ impl BingoBoard
         return false;
     }
 
-    fn check_bingo(&self, cell_idx: usize) -> bool
+    fn check_bingo(&mut self, cell_idx: usize) -> bool
     {
         let x = cell_idx / 5;
         let y = cell_idx - x * 5;
 
-        return self.check_bingo_row(y) ||
-               self.check_bingo_col(x);
+        self.bingo = self.check_bingo_row(y) ||
+                     self.check_bingo_col(x);
+        return self.bingo
     }
 
     fn check_bingo_col(&self, col_idx: usize) -> bool

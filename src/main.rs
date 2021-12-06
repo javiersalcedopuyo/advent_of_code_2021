@@ -20,6 +20,6 @@ fn main() {
     // println!("DAY 3, first puzzle: {}", day_3::day_3_1());
     // println!("DAY 3, second puzzle: {}", day_3::day_3_2());
     // DAY 4
-    println!("DAY 4, first puzzle: {}", day_4::day_4_1());
-    // println!("DAY 4, second puzzle: {}", day_4::day_4_2());
+    // println!("DAY 4, first puzzle: {}", day_4::day_4_1());
+    println!("DAY 4, second puzzle: {}", day_4::day_4_2());
 }
