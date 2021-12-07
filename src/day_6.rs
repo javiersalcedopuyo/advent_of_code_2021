@@ -2,73 +2,60 @@ use crate::input_parser::parse_input_at;
 
 pub fn day_6_1() -> usize
 {
-    let fishes = create_fishes_from_file("src/inputs/day_6_input.txt");
-    return calculate_fish_population_after_n_days(fishes, 80);
+    let mut day_counter_slots = get_counters_from_input("src/inputs/day_6_input.txt");
+    simulate_n_days(&mut day_counter_slots, 80);
+    return get_counters_sum(&day_counter_slots);
 }
 
-fn create_fishes_from_file(path: &str) -> Vec<Fish>
+pub fn day_6_2() -> usize
 {
+    let mut day_counter_slots = get_counters_from_input("src/inputs/day_6_input.txt");
+    simulate_n_days(&mut day_counter_slots, 256);
+    return get_counters_sum(&day_counter_slots);
+}
+
+// Slot N holds the number of fishes that have N days left to give birth.
+fn get_counters_from_input(path:&str) -> [usize; 9]
+{
+    let mut day_counter_slots = [0,0,0,0,0,0,0,0,0];
+
     let input = parse_input_at(path)
                     .unwrap_or("".to_string());
 
-    let mut fishes: Vec<Fish> = Vec::new();
     for entry in input.split(",")
     {
-        let num = entry.parse::<usize>();
-
-        match num
+        match entry.parse::<usize>()
         {
-            Ok(days_left) =>
-            {
-                fishes.push( Fish{ days_left } );
-            },
-            Err(_) => continue
+            Ok(days_left) => if days_left < 7 { day_counter_slots[days_left] += 1 },
+            Err(_)        => continue
         }
     }
 
-    return fishes;
+    return day_counter_slots;
 }
 
-fn calculate_fish_population_after_n_days(mut fishes: Vec<Fish>, num_days: usize) -> usize
+fn simulate_n_days(counters: &mut [usize;9], num_days: usize)
 {
     for _ in 0..num_days
     {
-        let mut new_fishes: Vec<Fish> = Vec::new();
-        for fish in &mut fishes
+        let tmp = counters[0];
+        for i in 0..8
         {
-            let new_fish = fish.advance_day();
-
-            match new_fish
-            {
-                Some(f) => new_fishes.push(f),
-                None    => continue
-            }
+            counters[i] = counters[i+1];
         }
-
-        fishes.append(&mut new_fishes);
+        counters[6] += tmp; // Old fishes get a new Time To Give Birth of 6
+        counters[8]  = tmp; // Newborns need an extra 2 days
     }
-
-    return fishes.len();
 }
 
-struct Fish
+fn get_counters_sum(counters: &[usize; 9]) -> usize
 {
-    days_left: usize
-}
-
-impl Fish
-{
-    pub fn advance_day(&mut self) -> Option<Fish>
+    let mut count = 0;
+    for slot in counters
     {
-        if self.days_left == 0
-        {
-            self.days_left = 6;
-            return Some( Fish{days_left: 8} );
-        }
-
-        self.days_left -= 1;
-        return None;
+        count += slot;
     }
+    return count;
 }
 
 #[cfg(test)]
@@ -77,16 +64,29 @@ mod tests
     use super::*;
 
     #[test]
-    fn test_create_fishes_from_file()
+    fn test_first_example()
     {
-        let fishes = create_fishes_from_file("src/inputs/day_6_example.txt");
-        assert_eq!(fishes.len(), 5);
+        let mut day_counter_slots = get_counters_from_input("src/inputs/day_6_example.txt");
+        simulate_n_days(&mut day_counter_slots, 80);
+        assert_eq!(get_counters_sum(&day_counter_slots), 5934);
     }
 
     #[test]
-    fn test_first_example()
+    fn test_second_example()
     {
-        let fishes = create_fishes_from_file("src/inputs/day_6_example.txt");
-        assert_eq!(calculate_fish_population_after_n_days(fishes, 80), 5934);
+        let mut day_counter_slots = get_counters_from_input("src/inputs/day_6_example.txt");
+        simulate_n_days(&mut day_counter_slots, 256);
+        assert_eq!(get_counters_sum(&day_counter_slots), 26984457539);
+    }
+
+    #[test]
+    fn test_get_example_counters()
+    {
+        let counters = get_counters_from_input("src/inputs/day_6_example.txt");
+
+        assert_eq!(counters[1], 1);
+        assert_eq!(counters[2], 1);
+        assert_eq!(counters[3], 2);
+        assert_eq!(counters[4], 1);
     }
 }

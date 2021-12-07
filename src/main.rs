@@ -27,4 +27,5 @@ fn main() {
     // println!("DAY 5, first puzzle: {}", day_5::day_5_1());
     // DAY 6
     println!("DAY 6, first puzzle: {}", day_6::day_6_1());
+    println!("DAY 6, first puzzle: {}", day_6::day_6_2());
 }
