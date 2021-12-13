@@ -14,6 +14,7 @@ mod day_6;
 mod day_7;
 mod day_8;
 mod day_9;
+mod day_10;
 
 fn main() {
     // DAY 1
@@ -39,6 +40,9 @@ fn main() {
     // println!("DAY 8, first puzzle: {}", day_8::day_8_1("src/inputs/day_8_input.txt"));
     // println!("DAY 8, first puzzle: {}", day_8::day_8_2("src/inputs/day_8_input.txt"));
     // DAY 9
-    println!("DAY 9, first puzzle: {}", day_9::day_9_1());
+    // println!("DAY 9, first puzzle: {}", day_9::day_9_1());
     // println!("DAY 9, first puzzle: {}", day_9::day_9_2());
+    // DAY 10
+    println!("DAY 10, first puzzle: {}", day_10::day_10_1());
+    // println!("DAY 10, first puzzle: {}", day_10::day_10_2());
 }
