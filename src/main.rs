@@ -3,6 +3,7 @@
 mod input_parser;
 mod coordinates;
 mod bingo_board;
+mod height_map;
 
 mod day_1;
 mod day_2;
@@ -12,6 +13,7 @@ mod day_5;
 mod day_6;
 mod day_7;
 mod day_8;
+mod day_9;
 
 fn main() {
     // DAY 1
@@ -34,6 +36,9 @@ fn main() {
     // println!("DAY 7, first puzzle: {}", day_7::day_7_1());
     // println!("DAY 7, first puzzle: {}", day_7::day_7_2());
     // DAY 8
-    println!("DAY 8, first puzzle: {}", day_8::day_8_1("src/inputs/day_8_input.txt"));
+    // println!("DAY 8, first puzzle: {}", day_8::day_8_1("src/inputs/day_8_input.txt"));
     // println!("DAY 8, first puzzle: {}", day_8::day_8_2("src/inputs/day_8_input.txt"));
+    // DAY 9
+    println!("DAY 9, first puzzle: {}", day_9::day_9_1());
+    // println!("DAY 9, first puzzle: {}", day_9::day_9_2());
 }
