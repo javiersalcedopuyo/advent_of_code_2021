@@ -32,17 +32,17 @@ fn main() {
     // println!("DAY 5, first puzzle: {}", day_5::day_5_1());
     // DAY 6
     // println!("DAY 6, first puzzle: {}", day_6::day_6_1());
-    // println!("DAY 6, first puzzle: {}", day_6::day_6_2());
+    // println!("DAY 6, second puzzle: {}", day_6::day_6_2());
     // DAY 7
     // println!("DAY 7, first puzzle: {}", day_7::day_7_1());
-    // println!("DAY 7, first puzzle: {}", day_7::day_7_2());
+    // println!("DAY 7, second puzzle: {}", day_7::day_7_2());
     // DAY 8
     // println!("DAY 8, first puzzle: {}", day_8::day_8_1("src/inputs/day_8_input.txt"));
-    // println!("DAY 8, first puzzle: {}", day_8::day_8_2("src/inputs/day_8_input.txt"));
+    // println!("DAY 8, second puzzle: {}", day_8::day_8_2("src/inputs/day_8_input.txt"));
     // DAY 9
     // println!("DAY 9, first puzzle: {}", day_9::day_9_1());
-    // println!("DAY 9, first puzzle: {}", day_9::day_9_2());
+    // println!("DAY 9, second puzzle: {}", day_9::day_9_2());
     // DAY 10
     println!("DAY 10, first puzzle: {}", day_10::day_10_1());
-    // println!("DAY 10, first puzzle: {}", day_10::day_10_2());
+    println!("DAY 10, second puzzle: {}", day_10::day_10_2());
 }
