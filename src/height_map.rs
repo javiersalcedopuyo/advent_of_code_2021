@@ -4,8 +4,8 @@ pub struct HeightMap
 {
     // NOTE: ROW MAJOR!
     cells: Vec<MapCell>,
-    pub num_rows: usize,
-    pub num_cols: usize
+    num_rows: usize,
+    num_cols: usize
 }
 
 struct MapCell
@@ -56,7 +56,7 @@ impl HeightMap
 
             (*cell).is_visited = true;
 
-            let low = self.trickle_down_from(i);
+            let low = self.flow_down_from(i);
             if low.is_some()
             {
                 low_points.push(low.unwrap());
@@ -67,13 +67,13 @@ impl HeightMap
     }
 
     // Simulate a "ball" falling from a given height map position.
-    // The ball will always move to the smaller neighbour, as long as it's not
-    // higher than the current point.
-    fn trickle_down_from(&mut self, i: usize) -> Option<usize>
+    // The ball will always move to the smaller neighbour, as long as it's
+    // lower than the current point.
+    fn flow_down_from(&mut self, i: usize) -> Option<usize>
     {
         let mut current_value = self.cells[i].val;
-        let (mut cell, mut idx) = self.get_smaller_or_equal_neighbour_and_idx(i);
-        while cell.val <= current_value
+        let (mut cell, mut idx) = self.get_smallest_neighbour_and_idx(i);
+        while cell.val < current_value
         {
             if cell.is_visited
             {
@@ -86,52 +86,52 @@ impl HeightMap
             cell.is_visited = true;
 
             current_value = cell.val;
-            let sn        = self.get_smaller_or_equal_neighbour_and_idx(idx);
-
-            if idx == sn.1 { break; } // We're already at the lowest possible point
-
+            let sn        = self.get_smallest_neighbour_and_idx(idx);
             cell = sn.0;
             idx  = sn.1;
         }
 
-        assert!(current_value < 9);
+        if cell.val == current_value { return  None; }
         return Some(current_value);
     }
 
-    fn get_smaller_or_equal_neighbour_and_idx(&mut self, i: usize) -> (&mut MapCell, usize)
+    fn get_smallest_neighbour_and_idx(&mut self, i: usize) -> (&mut MapCell, usize)
     {
         let y = i / self.num_cols;
         let x = i - y * self.num_cols;
 
-        let left_idx    = i.checked_sub(1).unwrap_or(i);
-        let right_idx   = if i < self.cells.len() - 1 { i + 1 } else { i };
-        let top_idx     = i.checked_sub(self.num_cols).unwrap_or(i);
-        let bottom_idx  = if i < self.cells.len() - self.num_cols { i + self.num_cols } else { i };
+        let left_idx    = i.checked_sub(1);
+        let right_idx   = if i < self.cells.len() - 1 { Some(i + 1) } else { None };
+        let top_idx     = i.checked_sub(self.num_cols);
+        let bottom_idx  = if i < self.cells.len() - self.num_cols { Some(i + self.num_cols) } else { None };
 
-        let current_val = self.cells[i].val;
+        let mut smaller_neighbours = Vec::with_capacity(4);
+        if x > 0 && left_idx.is_some()
+        {
+            let idx = left_idx.unwrap();
+            smaller_neighbours.push( (self.cells[idx].val, idx) );
+        }
+        if x < self.num_cols && right_idx.is_some()
+        {
+            let idx = right_idx.unwrap();
+            smaller_neighbours.push( (self.cells[idx].val, idx) );
+        }
+        if y > 0 && top_idx.is_some()
+        {
+            let idx = top_idx.unwrap();
+            smaller_neighbours.push( (self.cells[idx].val, idx) );
+        }
+        if y < self.num_rows && bottom_idx.is_some()
+        {
+            let idx = bottom_idx.unwrap();
+            smaller_neighbours.push( (self.cells[idx].val, idx) );
+        }
 
-        let mut smaller_neighbours = Vec::new();
-        if x > 0 && self.cells[left_idx].val <= current_val
-        {
-            smaller_neighbours.push( (self.cells[left_idx].val, left_idx) );
-        }
-        if x < self.num_cols && self.cells[right_idx].val <= current_val
-        {
-            smaller_neighbours.push( (self.cells[right_idx].val, right_idx) );
-        }
-        if y > 0 && self.cells[top_idx].val <= current_val
-        {
-            smaller_neighbours.push( (self.cells[top_idx].val, top_idx) );
-        }
-        if y < self.num_rows && self.cells[bottom_idx].val <= current_val
-        {
-            smaller_neighbours.push( (self.cells[bottom_idx].val, bottom_idx) );
-        }
+        smaller_neighbours.sort_unstable_by(|a, b|{ a.0.cmp(&b.0) });
 
-        smaller_neighbours.sort_by(|a, b|{ a.0.cmp(&b.0) });
-
+        assert!(!smaller_neighbours.is_empty());
+        // The only case when smaller_neighbours would be empty is when the height map is 1x1
         let idx = if smaller_neighbours.is_empty() { i } else { smaller_neighbours[0].1 };
-
         return (&mut self.cells[idx], idx);
     }
 }
@@ -156,6 +156,7 @@ mod tests
         let mut map    = HeightMap::new_from_file("src/inputs/day_9_example.txt");
         let low_points = map.get_low_points();
 
+        println!("{:?}", low_points);
         assert_eq!(low_points.len(), 4);
 
         assert_eq!(low_points[0], 1);
@@ -168,7 +169,7 @@ mod tests
     fn test_trickle_down_from_neighbour()
     {
         let mut map = HeightMap::new_from_file("src/inputs/day_9_example.txt");
-        let low = map.trickle_down_from(0).unwrap();
+        let low = map.flow_down_from(0).unwrap();
 
         assert_eq!(low, 1);
     }
@@ -177,7 +178,7 @@ mod tests
     fn test_trickle_down()
     {
         let mut map = HeightMap::new_from_file("src/inputs/day_9_example.txt");
-        let low = map.trickle_down_from(14).unwrap();
+        let low = map.flow_down_from(14).unwrap();
 
         assert_eq!(low, 5);
     }
@@ -186,7 +187,7 @@ mod tests
     fn test_get_smaller_neighbour()
     {
         let mut map = HeightMap::new_from_file("src/inputs/day_9_example.txt");
-        let smaller_neighbour = map.get_smaller_or_equal_neighbour_and_idx(24);
+        let smaller_neighbour = map.get_smallest_neighbour_and_idx(24);
 
         assert_eq!(smaller_neighbour.0.val, 6); // value
         assert_eq!(smaller_neighbour.1, 23);     // idx

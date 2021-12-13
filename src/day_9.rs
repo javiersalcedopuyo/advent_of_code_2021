@@ -28,8 +28,15 @@ mod tests
     {
         let mut map = HeightMap::new_from_file("src/inputs/day_9_example.txt");
         let low_points = map.get_low_points();
-        println!("{:?}", low_points);
         assert_eq!(calculate_risk(&low_points), 15);
+    }
+
+    #[test]
+    fn test_first_puzzle_full_input()
+    {
+        let mut map = HeightMap::new_from_file("src/inputs/day_9_input.txt");
+        let low_points = map.get_low_points();
+        assert_eq!(calculate_risk(&low_points), 541);
     }
 
     #[test]
