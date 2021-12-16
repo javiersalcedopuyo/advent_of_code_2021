@@ -21,6 +21,12 @@ pub fn day_11_1() -> usize
     return grid.simulate_n_steps(100);
 }
 
+pub fn day_11_2() -> usize
+{
+    let mut grid = OctoGrid::new_from_file("src/inputs/day_11_input.txt");
+    return grid.calculate_steps_to_sync();
+}
+
 impl OctoGrid
 {
     pub fn print(&self)
@@ -65,6 +71,16 @@ impl OctoGrid
             flash_count += self.step();
         }
         return flash_count;
+    }
+
+    pub fn calculate_steps_to_sync(&mut self) -> usize
+    {
+        let mut step_count = 1;
+        while self.step() != GRID_SIZE
+        {
+            step_count += 1;
+        }
+        return step_count;
     }
 
     fn step(&mut self) -> usize
@@ -181,6 +197,13 @@ mod tests
     {
         let mut grid = OctoGrid::new_from_file("src/inputs/day_11_example.txt");
         assert_eq!(grid.simulate_n_steps(100), 1656);
+    }
+
+    #[test]
+    fn test_second_puzzle()
+    {
+        let mut grid = OctoGrid::new_from_file("src/inputs/day_11_example.txt");
+        assert_eq!(grid.calculate_steps_to_sync(), 195);
     }
 
     #[test]
