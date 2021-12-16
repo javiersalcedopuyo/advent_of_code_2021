@@ -16,6 +16,7 @@ mod day_8;
 mod day_9;
 mod day_10;
 mod day_11;
+mod day_12;
 
 fn main() {
     // DAY 1
@@ -47,6 +48,7 @@ fn main() {
     // println!("DAY 10, first puzzle: {}", day_10::day_10_1());
     // println!("DAY 10, second puzzle: {}", day_10::day_10_2());
     // DAY 11
-    println!("DAY 11, first puzzle: {}", day_11::day_11_1());
-    println!("DAY 11, second puzzle: {}", day_11::day_11_2());
+    // println!("DAY 11, first puzzle: {}", day_11::day_11_1());
+    // DAY 12
+    println!("DAY 12, first puzzle: {}", day_12::day_12_1());
 }
