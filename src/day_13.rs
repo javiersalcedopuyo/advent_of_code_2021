@@ -8,6 +8,13 @@ pub fn day_13_1() -> usize
     return sheet.count_points();
 }
 
+pub fn day_13_2()
+{
+    let (mut sheet, instructions) = get_paper_and_instructions_from_file("src/inputs/day_13_input.txt");
+    sheet.fold(instructions);
+    sheet.print();
+}
+
 fn get_paper_and_instructions_from_file(path: &str) -> (PaperSheet, Vec<FoldInstruction>)
 {
     let input = parse_input_at(path).unwrap_or_default();
@@ -128,8 +135,9 @@ impl PaperSheet
             {
                 for y in 0..self.points[0].len()
                 {
-                    let new_x = if x > self.width  { 2*self.width  - x } else { x };
-                    let new_y = if y > self.height { 2*self.height - y } else { y };
+                    // println!(" X{} vs W{}", x, self.width);
+                    let new_x = if x > self.width  && x <= 2*self.width  { 2*self.width  - x } else { x };
+                    let new_y = if y > self.height && y <= 2*self.height { 2*self.height - y } else { y };
 
                     self.points[new_x][new_y] |= self.points[x][y];
                 }
@@ -149,6 +157,18 @@ impl PaperSheet
         }
         return count;
     }
+
+    pub fn print(&self)
+    {
+        for y in 0..self.height
+        {
+            for x in 0..self.width
+            {
+                print!("{}", if self.points[x][y] { 'x' } else { ' ' });
+            }
+            print!("\n");
+        }
+    }
 }
 
 #[cfg(test)]
@@ -163,6 +183,15 @@ mod tests
         let first_instruction = vec![instructions.first().unwrap().clone()];
         sheet.fold(first_instruction);
         assert_eq!(sheet.count_points(), 17);
+    }
+
+    #[test]
+    fn test_second_puzzle()
+    {
+        let (mut sheet, instructions) = get_paper_and_instructions_from_file("src/inputs/day_13_example.txt");
+        sheet.fold(instructions);
+        sheet.print();
+        // panic!(); // Uncomment to see the print
     }
 
     #[test]
