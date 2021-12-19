@@ -44,6 +44,13 @@ impl HeightMap
         self.cells.push( MapCell{ val, is_visited: false} );
     }
 
+    pub fn get_num_cells(&self)  -> usize          { self.cells.len() }
+    pub fn get_cell_value(&self, i: usize) -> usize
+    {
+        assert!(i < self.cells.len());
+        return self.cells[i].val;
+    }
+
     pub fn get_low_points(&mut self) -> Vec<usize>
     {
         let mut low_points = Vec::new();
@@ -97,6 +104,18 @@ impl HeightMap
 
     fn get_smallest_neighbour_and_idx(&mut self, i: usize) -> (&mut MapCell, usize)
     {
+        let mut smaller_neighbours = self.get_neighbours(i);
+
+        smaller_neighbours.sort_unstable_by(|a, b|{ a.0.cmp(&b.0) });
+
+        assert!(!smaller_neighbours.is_empty());
+        // The only case when smaller_neighbours would be empty is when the height map is 1x1
+        let idx = if smaller_neighbours.is_empty() { i } else { smaller_neighbours[0].1 };
+        return (&mut self.cells[idx], idx);
+    }
+
+    pub fn get_neighbours(&self, i: usize) -> Vec<(usize, usize)>
+    {
         let y = i / self.num_cols;
         let x = i - y * self.num_cols;
 
@@ -127,12 +146,7 @@ impl HeightMap
             smaller_neighbours.push( (self.cells[idx].val, idx) );
         }
 
-        smaller_neighbours.sort_unstable_by(|a, b|{ a.0.cmp(&b.0) });
-
-        assert!(!smaller_neighbours.is_empty());
-        // The only case when smaller_neighbours would be empty is when the height map is 1x1
-        let idx = if smaller_neighbours.is_empty() { i } else { smaller_neighbours[0].1 };
-        return (&mut self.cells[idx], idx);
+        return smaller_neighbours;
     }
 }
 
